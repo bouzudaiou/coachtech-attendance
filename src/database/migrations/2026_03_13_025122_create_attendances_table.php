@@ -17,7 +17,7 @@ return new class extends Migration
             $table->date('work_date');
             $table->time('clock_in')->nullable();
             $table->time('clock_out')->nullable();
-            $table->string('status');
+            $table->enum('status', ['勤務外', '出勤中', '休憩中', '退勤済'])->default('勤務外');
             $table->timestamps();
             $table->foreign('user_id')->references('id')->on('users');
         });
