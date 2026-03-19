@@ -18,7 +18,7 @@ return new class extends Migration
             $table->time('clock_in')->nullable();
             $table->time('clock_out')->nullable();
             $table->string('remarks');
-            $table->string('status');
+            $table->enum('status', ['承認待ち', '承認済み'])->default('承認待ち');
             $table->timestamps();
             $table->foreign('attendance_id')->references('id')->on('attendances');
             $table->foreign('user_id')->references('id')->on('users');
