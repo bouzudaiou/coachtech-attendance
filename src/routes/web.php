@@ -33,7 +33,12 @@ Route::middleware('auth')->group(function () {
     Route::post('/stamp_correction_request/approve/{attendance_correct_request_id}', [StampCorrectionRequestController::class, 'update']);
 });
 
-Route::get('/attendance',[AttendanceController::class, 'index']);
-Route::post('/attendance',[AttendanceController::class, 'store']);
+Route::middleware(['auth', 'user'])->group(function () {
+    Route::get('/attendance', [AttendanceController::class, 'index']);
+    Route::post('/attendance', [AttendanceController::class, 'store']);
+    Route::get('/attendance/list', [AttendanceController::class, 'list']);
+    Route::get('/attendance/detail/{id}', [AttendanceController::class, 'show']);
+    Route::post('/attendance/detail/{id}', [AttendanceController::class, 'store']);
+});
 
 
