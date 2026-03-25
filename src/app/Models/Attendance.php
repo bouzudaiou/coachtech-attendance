@@ -19,7 +19,7 @@ class Attendance extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function rest_times()
+    public function restTimes()
     {
         return $this->hasMany(RestTime::class);
     }
