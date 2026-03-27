@@ -37,35 +37,36 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($attendances as $attendance)
+                    @foreach ($days as $day)
+                        @php
+                            $attendance = $attendanceMap[$day->toDateString()] ?? null;
+                            $totalRest = 0;
+                            if ($attendance) {
+                                foreach ($attendance->restTimes as $rest) {
+                                    if ($rest->rest_start && $rest->rest_end) {
+                                        $totalRest += \Carbon\Carbon::parse($rest->rest_start)
+                                            ->diffInMinutes(\Carbon\Carbon::parse($rest->rest_end));
+                                    }
+                                }
+                            }
+                            $restHours   = intdiv($totalRest, 60);
+                            $restMinutes = $totalRest % 60;
+                        @endphp
                         <tr class="border-b border-gray-200">
                             <td class="py-4 px-4 text-center text-sm">
-                                {{ \Carbon\Carbon::parse($attendance->work_date)->isoFormat('MM/DD(ddd)') }}
+                                {{ $day->isoFormat('MM/DD(ddd)') }}
                             </td>
                             <td class="py-4 px-4 text-center text-sm">
-                                {{ $attendance->clock_in ? \Carbon\Carbon::parse($attendance->clock_in)->format('H:i') : '' }}
+                                {{ $attendance?->clock_in ? \Carbon\Carbon::parse($attendance->clock_in)->format('H:i') : '' }}
                             </td>
                             <td class="py-4 px-4 text-center text-sm">
-                                {{ $attendance->clock_out ? \Carbon\Carbon::parse($attendance->clock_out)->format('H:i') : '' }}
+                                {{ $attendance?->clock_out ? \Carbon\Carbon::parse($attendance->clock_out)->format('H:i') : '' }}
                             </td>
                             <td class="py-4 px-4 text-center text-sm">
-                                {{-- 休憩合計（分）を H:mm 形式で表示 --}}
-                                @php
-                                    $totalRest = 0;
-                                    foreach ($attendance->restTimes as $rest) {
-                                        if ($rest->rest_start && $rest->rest_end) {
-                                            $totalRest += \Carbon\Carbon::parse($rest->rest_start)
-                                                ->diffInMinutes(\Carbon\Carbon::parse($rest->rest_end));
-                                        }
-                                    }
-                                    $restHours = intdiv($totalRest, 60);
-                                    $restMinutes = $totalRest % 60;
-                                @endphp
                                 {{ $totalRest > 0 ? sprintf('%d:%02d', $restHours, $restMinutes) : '' }}
                             </td>
                             <td class="py-4 px-4 text-center text-sm">
-                                {{-- 実働時間（退勤 - 出勤 - 休憩） --}}
-                                @if ($attendance->clock_in && $attendance->clock_out)
+                                @if ($attendance?->clock_in && $attendance?->clock_out)
                                     @php
                                         $workMinutes = \Carbon\Carbon::parse($attendance->clock_in)
                                             ->diffInMinutes(\Carbon\Carbon::parse($attendance->clock_out)) - $totalRest;
@@ -76,8 +77,10 @@
                                 @endif
                             </td>
                             <td class="py-4 px-4 text-center text-sm">
-                                <a href="{{ url('/attendance/detail/' . $attendance->id) }}"
-                                    class="font-bold hover:opacity-70">詳細</a>
+                                @if ($attendance)
+                                    <a href="{{ url('/attendance/detail/' . $attendance->id) }}"
+                                        class="font-bold hover:opacity-70">詳細</a>
+                                @endif
                             </td>
                         </tr>
                     @endforeach

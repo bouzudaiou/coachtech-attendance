@@ -121,6 +121,7 @@
 
                 {{-- 修正ボタン --}}
                 <div class="flex justify-end mt-6">
+                    <input type="hidden" name="action" value="correction">
                     <button type="submit"
                         class="bg-black text-white font-bold px-10 py-3 hover:bg-gray-800 transition">
                         修正
