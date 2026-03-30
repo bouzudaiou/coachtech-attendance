@@ -30,9 +30,29 @@ class StampCorrectionRequestController extends Controller
     }
 
     public function show($attendance_correct_request_id) {
+        $correctionRequest = StampCorrectionRequest::with('attendance.restTimes')
+            ->findOrFail($attendance_correct_request_id);
 
+        $attendance = $correctionRequest->attendance;
+        $restTimes = $attendance->restTimes;
+        $isApproved = $correctionRequest->status === '承認済み';
 
+        return view('stamp_correction_request.approve', compact('correctionRequest', 'attendance', 'restTimes', 'isApproved'));
     }
 
+    public function update($attendance_correct_request_id) {
+        $correctionRequest = StampCorrectionRequest::with('attendance')->findOrFail($attendance_correct_request_id);
+        $attendance = $correctionRequest->attendance;
 
+    $correctionRequest->update([
+        'status' => '承認済み'
+    ]);
+
+    $attendance->update([
+        'clock_in' => $correctionRequest->clock_in,
+        'clock_out' => $correctionRequest->clock_out,
+    ]);
+
+    return redirect('/stamp_correction_request/list');
+    }
 }
