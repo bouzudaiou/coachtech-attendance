@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Attendance;
+use App\Models\RestTime;
 use Illuminate\Http\Request;
 
 class AdminAttendanceController extends Controller
@@ -32,11 +33,25 @@ class AdminAttendanceController extends Controller
         $attendance->update([
             'clock_in' => $request->input('clock_in'),
             'clock_out' => $request->input('clock_out'),
+            'remarks' => $request->input('remarks'),
         ]);
 
-        $attendance->restTimes()->update([
-            'rest_start' => $request->input('rest_start'),
-            'rest_end' => $attendance->restTimes->last()->rest_end,
-        ])
+        foreach ($request->input('rest_id') as $index => $restId) {
+            if ($restId) {
+                // 既存レコードの更新
+                RestTime::find($restId)->update([
+                    'rest_start' => $request->input('rest_start')[$index],
+                    'rest_end'   => $request->input('rest_end')[$index],
+                ]);
+            } else {
+                // 新規レコードの作成（追加休憩行に入力があった場合）
+                $attendance->restTimes()->create([
+                    'rest_start' => $request->input('rest_start')[$index],
+                    'rest_end'   => $request->input('rest_end')[$index],
+                ]);
+            }
+        }
+
+        return redirect('/admin/attendance/list');
     }
 }

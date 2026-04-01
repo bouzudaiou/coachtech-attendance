@@ -76,7 +76,7 @@
                 <div class="flex items-start border-b border-gray-200 px-8 py-5">
                     <span class="w-40 text-sm text-gray-500 mt-2">備考</span>
                     <textarea name="remarks" rows="3"
-                        class="border border-gray-400 px-3 py-2 w-72 focus:outline-none">{{ old('remarks') }}</textarea>
+                        class="border border-gray-400 px-3 py-2 w-72 focus:outline-none">{{ old('remarks', $attendance->remarks) }}</textarea>
                 </div>
             </div>
 
