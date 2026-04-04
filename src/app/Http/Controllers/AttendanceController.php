@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Attendance;
 use Illuminate\Http\Request;
+use App\Http\Requests\AttendanceRequest;
 
 class AttendanceController extends Controller
 {
@@ -72,6 +73,11 @@ class AttendanceController extends Controller
                 'status' => '出勤中'
             ]);
         }elseif($action === 'correction') {
+            $request->validate(
+                (new AttendanceRequest())->rules(),
+                (new AttendanceRequest())->messages()
+            );
+
             $attendance = Attendance::findOrFail($id);
 
             $attendance->stampCorrectionRequests()->create([

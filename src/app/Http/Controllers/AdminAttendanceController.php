@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Attendance;
 use App\Models\RestTime;
 use Illuminate\Http\Request;
+use App\Http\Requests\AdminAttendanceRequest;
 
 class AdminAttendanceController extends Controller
 {
@@ -27,7 +28,7 @@ class AdminAttendanceController extends Controller
         return view('admin.attendance.detail', compact('attendance', 'restTimes'));
     }
 
-    public function update(Request $request, $id) {
+    public function update(AdminAttendanceRequest $request, $id) {
         $attendance = Attendance::with('restTimes')->findOrFail($id);
 
         $attendance->update([
