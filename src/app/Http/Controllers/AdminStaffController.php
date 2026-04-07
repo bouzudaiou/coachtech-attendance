@@ -8,13 +8,15 @@ use Illuminate\Http\Request;
 
 class AdminStaffController extends Controller
 {
-    public function index() {
+    public function index()
+    {
         $users = User::where('role', 'user')->get();
 
         return view('admin.staff.list', compact('users'));
     }
 
-    public function show(Request $request, $id) {
+    public function show(Request $request, $id)
+    {
 
         $user = User::findOrFail($id);
 
@@ -28,7 +30,7 @@ class AdminStaffController extends Controller
             ->with('restTimes')
             ->get();
 
-        $attendanceMap = $attendances->keyBy(function($a) {
+        $attendanceMap = $attendances->keyBy(function ($a) {
             return $a->work_date;
         });
 
@@ -40,7 +42,8 @@ class AdminStaffController extends Controller
         return view('admin.attendance.staff', compact('user', 'attendances', 'attendanceMap', 'days', 'currentMonth'));
     }
 
-    public function export(Request $request, $id) {
+    public function export(Request $request, $id)
+    {
         User::findOrFail($id);
 
         $currentMonth = $request->query('month')
@@ -66,7 +69,7 @@ class AdminStaffController extends Controller
                 }
             }
             $restHours = intdiv($totalRest, 60);
-            $restMins  = $totalRest % 60;
+            $restMins = $totalRest % 60;
 
             // ②先に勤務合計を計算
             $totalWork = 0;
@@ -75,12 +78,12 @@ class AdminStaffController extends Controller
                         ->diffInMinutes(\Carbon\Carbon::parse($attendance->clock_out)) - $totalRest;
             }
             $workHours = intdiv($totalWork, 60);
-            $workMins  = $totalWork % 60;
+            $workMins = $totalWork % 60;
 
             // ③計算済みの値を配列に入れる
             $csvData[] = [
                 $attendance->work_date,
-                $attendance->clock_in  ?? '',
+                $attendance->clock_in ?? '',
                 $attendance->clock_out ?? '',
                 $totalRest > 0 ? sprintf('%d:%02d', $restHours, $restMins) : '',
                 $totalWork > 0 ? sprintf('%d:%02d', $workHours, $workMins) : '',

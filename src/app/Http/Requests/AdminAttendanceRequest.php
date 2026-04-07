@@ -29,7 +29,7 @@ class AdminAttendanceRequest extends FormRequest
     public function withValidator($validator)
     {
         $validator->after(function ($validator) {
-            $clockIn  = $this->input('clock_in');
+            $clockIn = $this->input('clock_in');
             $clockOut = $this->input('clock_out');
 
             // ① 出勤 ≥ 退勤
@@ -39,7 +39,7 @@ class AdminAttendanceRequest extends FormRequest
 
             // ② 休憩の論理チェック
             $restStarts = $this->input('rest_start', []);
-            $restEnds   = $this->input('rest_end', []);
+            $restEnds = $this->input('rest_end', []);
 
             foreach ($restStarts as $index => $restStart) {
                 $restEnd = $restEnds[$index] ?? null;

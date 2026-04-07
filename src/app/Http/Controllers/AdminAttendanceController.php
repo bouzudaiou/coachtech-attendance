@@ -9,7 +9,8 @@ use App\Http\Requests\AdminAttendanceRequest;
 
 class AdminAttendanceController extends Controller
 {
-    public function index(Request $request) {
+    public function index(Request $request)
+    {
         $currentDate = $request->query('date')
             ? \Carbon\Carbon::parse($request->query('date'))
             : now();
@@ -21,14 +22,16 @@ class AdminAttendanceController extends Controller
         return view('admin.attendance.list', compact('attendances', 'currentDate'));
     }
 
-    public function show($id) {
+    public function show($id)
+    {
         $attendance = Attendance::with('user', 'restTimes')->findOrFail($id);
         $restTimes = $attendance->restTimes;
 
         return view('admin.attendance.detail', compact('attendance', 'restTimes'));
     }
 
-    public function update(AdminAttendanceRequest $request, $id) {
+    public function update(AdminAttendanceRequest $request, $id)
+    {
         $attendance = Attendance::with('restTimes')->findOrFail($id);
 
         $attendance->update([
@@ -42,13 +45,13 @@ class AdminAttendanceController extends Controller
                 // 既存レコードの更新
                 RestTime::find($restId)->update([
                     'rest_start' => $request->input('rest_start')[$index],
-                    'rest_end'   => $request->input('rest_end')[$index],
+                    'rest_end' => $request->input('rest_end')[$index],
                 ]);
             } else {
                 // 新規レコードの作成（追加休憩行に入力があった場合）
                 $attendance->restTimes()->create([
                     'rest_start' => $request->input('rest_start')[$index],
-                    'rest_end'   => $request->input('rest_end')[$index],
+                    'rest_end' => $request->input('rest_end')[$index],
                 ]);
             }
         }

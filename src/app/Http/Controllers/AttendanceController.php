@@ -13,8 +13,8 @@ class AttendanceController extends Controller
         $user = auth()->user();
         $today = now();
         $attendance = Attendance::where('user_id', auth()->user()->id)
-                            ->where('work_date', $today->toDateString())
-                            ->first();
+            ->where('work_date', $today->toDateString())
+            ->first();
         $status = $attendance?->status ?? '勤務外';
 
         return view('attendance.index', compact('status', 'today'));
@@ -27,12 +27,18 @@ class AttendanceController extends Controller
         $now = now();
 
         if ($action === 'clock_in') {
-            Attendance::create([
-                'user_id' => auth()->user()->id,
-                'work_date' => $now->toDateString(),
-                'clock_in' => $now->toTimeString(),
-                'status' => '出勤中',
-            ]);
+            $exists = Attendance::where('user_id', auth()->user()->id)
+                ->where('work_date', $now->toDateString())
+                ->exists();
+
+            if (!$exists) {
+                Attendance::create([
+                    'user_id' => auth()->user()->id,
+                    'work_date' => $now->toDateString(),
+                    'clock_in' => $now->toTimeString(),
+                    'status' => '出勤中',
+                ]);
+            }
         } elseif ($action === 'clock_out') {
             $attendance = Attendance::where('user_id', auth()->user()->id)
                 ->where('work_date', $now->toDateString())
@@ -48,14 +54,20 @@ class AttendanceController extends Controller
                 ->where('work_date', $now->toDateString())
                 ->firstOrFail();
 
-            $attendance->restTimes()->create([
-                'rest_start' => $now->toTimeString(),
-            ]);
+            // 未終了の休憩がない場合だけ作成
+            $openRest = $attendance->restTimes()
+                ->whereNull('rest_end')
+                ->exists();
 
-            $attendance->update([
-                'status' => '休憩中'
-            ]);
-        }elseif($action === 'rest_end'){
+            if (!$openRest) {
+                $attendance->restTimes()->create([
+                    'rest_start' => $now->toTimeString(),
+                ]);
+                $attendance->update([
+                    'status' => '休憩中'
+                ]);
+            }
+        } elseif ($action === 'rest_end') {
 
             $attendance = Attendance::where('user_id', auth()->user()->id)
                 ->where('work_date', $now->toDateString())
@@ -72,7 +84,7 @@ class AttendanceController extends Controller
             $attendance->update([
                 'status' => '出勤中'
             ]);
-        }elseif($action === 'correction') {
+        } elseif ($action === 'correction') {
             $request->validate(
                 (new AttendanceRequest())->rules(),
                 (new AttendanceRequest())->messages()
@@ -93,7 +105,8 @@ class AttendanceController extends Controller
         return redirect('/attendance');
     }
 
-    public function list(Request $request) {
+    public function list(Request $request)
+    {
         // クエリパラメーターがあればその月、なければ今月
         $currentMonth = $request->query('month')
             ? \Carbon\Carbon::parse($request->query('month'))
@@ -112,7 +125,7 @@ class AttendanceController extends Controller
         );
 
 // attendancesをwork_dateをキーにした連想配列に変換
-        $attendanceMap = $attendances->keyBy(function($a) {
+        $attendanceMap = $attendances->keyBy(function ($a) {
             return $a->work_date;
         });
 

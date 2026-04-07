@@ -21,10 +21,10 @@ use App\Http\Controllers\StampCorrectionRequestController;
 Route::get('/admin/login', [\App\Http\Controllers\AuthController::class, 'showLoginForm']);
 Route::post('/admin/login', [\App\Http\Controllers\AuthController::class, 'login']);
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/attendance/list', [AdminAttendanceController::class, 'index']);
     Route::get('/admin/attendance/{id}', [AdminAttendanceController::class, 'show']);
-    Route::post('/admin/attendance/{id}',[AdminAttendanceController::class, 'update']);
+    Route::post('/admin/attendance/{id}', [AdminAttendanceController::class, 'update']);
     Route::get('/admin/staff/list', [AdminStaffController::class, 'index']);
     Route::get('/admin/attendance/staff/{id}', [AdminStaffController::class, 'show']);
     Route::get('/admin/attendance/staff/{id}/export', [AdminStaffController::class, 'export']);
