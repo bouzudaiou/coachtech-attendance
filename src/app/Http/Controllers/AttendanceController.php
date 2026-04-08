@@ -85,10 +85,8 @@ class AttendanceController extends Controller
                 'status' => '出勤中'
             ]);
         } elseif ($action === 'correction') {
-            $request->validate(
-                (new AttendanceRequest())->rules(),
-                (new AttendanceRequest())->messages()
-            );
+            $formRequest = app(AttendanceRequest::class);
+            $formRequest->validateResolved();
 
             $attendance = Attendance::findOrFail($id);
 
