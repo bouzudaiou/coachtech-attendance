@@ -8,15 +8,6 @@
 
         <h1 class="text-2xl font-bold mb-10">会員登録</h1>
 
-        {{-- エラーメッセージ --}}
-        @if ($errors->any())
-            <div class="w-full max-w-xl mb-6">
-                @foreach ($errors->all() as $error)
-                    <p class="text-red-500 text-sm">{{ $error }}</p>
-                @endforeach
-            </div>
-        @endif
-
         <form method="POST" action="{{ route('register') }}" class="w-full max-w-xl">
             @csrf
 
@@ -30,6 +21,9 @@
                     value="{{ old('name') }}"
                     class="w-full border border-gray-400 px-4 py-3 focus:outline-none focus:border-gray-600"
                 >
+                @error('name')
+                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                @enderror
             </div>
 
             {{-- メールアドレス --}}
@@ -42,6 +36,9 @@
                     value="{{ old('email') }}"
                     class="w-full border border-gray-400 px-4 py-3 focus:outline-none focus:border-gray-600"
                 >
+                @error('email')
+                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                @enderror
             </div>
 
             {{-- パスワード --}}
@@ -53,6 +50,9 @@
                     name="password"
                     class="w-full border border-gray-400 px-4 py-3 focus:outline-none focus:border-gray-600"
                 >
+                @error('password')
+                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                @enderror
             </div>
 
             {{-- パスワード確認 --}}
