@@ -21,6 +21,7 @@ use App\Http\Controllers\StampCorrectionRequestController;
 Route::get('/admin/login', [\App\Http\Controllers\AuthController::class, 'showLoginForm']);
 Route::post('/admin/login', [\App\Http\Controllers\AuthController::class, 'login']);
 
+// 管理者用ルート
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/attendance/list', [AdminAttendanceController::class, 'index']);
     Route::get('/admin/attendance/{id}', [AdminAttendanceController::class, 'show']);
@@ -28,11 +29,16 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/staff/list', [AdminStaffController::class, 'index']);
     Route::get('/admin/attendance/staff/{id}', [AdminStaffController::class, 'show']);
     Route::get('/admin/attendance/staff/{id}/export', [AdminStaffController::class, 'export']);
+});
+
+// 申請関連（一般・管理者共通）
+Route::middleware(['auth'])->group(function () {
     Route::get('/stamp_correction_request/list', [StampCorrectionRequestController::class, 'index']);
     Route::get('/stamp_correction_request/approve/{attendance_correct_request_id}', [StampCorrectionRequestController::class, 'show']);
     Route::post('/stamp_correction_request/approve/{attendance_correct_request_id}', [StampCorrectionRequestController::class, 'update']);
 });
 
+// 一般ユーザー用ルート
 Route::middleware(['auth', 'user'])->group(function () {
     Route::get('/attendance', [AttendanceController::class, 'index']);
     Route::post('/attendance', [AttendanceController::class, 'store']);
