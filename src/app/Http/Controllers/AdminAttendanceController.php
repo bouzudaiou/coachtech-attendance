@@ -33,26 +33,30 @@ class AdminAttendanceController extends Controller
     public function update(AdminAttendanceRequest $request, $id)
     {
         $attendance = Attendance::with('restTimes')->findOrFail($id);
-
         $attendance->update([
-            'clock_in' => $request->input('clock_in'),
+            'clock_in'  => $request->input('clock_in'),
             'clock_out' => $request->input('clock_out'),
-            'remarks' => $request->input('remarks'),
+            'remarks'   => $request->input('remarks'),
         ]);
 
-        foreach ($request->input('rest_id') as $index => $restId) {
+        foreach ($request->input('rest_id', []) as $index => $restId) {
             if ($restId) {
                 // 既存レコードの更新
-                RestTime::find($restId)->update([
-                    'rest_start' => $request->input('rest_start')[$index],
-                    'rest_end' => $request->input('rest_end')[$index],
-                ]);
+                $restTime = RestTime::find($restId);
+                if ($restTime) {
+                    $restTime->update([
+                        'rest_start' => $request->input('rest_start')[$index],
+                        'rest_end'   => $request->input('rest_end')[$index],
+                    ]);
+                }
             } else {
-                // 新規レコードの作成（追加休憩行に入力があった場合）
-                $attendance->restTimes()->create([
-                    'rest_start' => $request->input('rest_start')[$index],
-                    'rest_end' => $request->input('rest_end')[$index],
-                ]);
+                // 新規レコードの作成（追加休憩行に入力があった場合のみ）
+                if ($request->input('rest_start')[$index]) {
+                    $attendance->restTimes()->create([
+                        'rest_start' => $request->input('rest_start')[$index],
+                        'rest_end'   => $request->input('rest_end')[$index],
+                    ]);
+                }
             }
         }
 
