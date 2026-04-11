@@ -34,9 +34,9 @@ class AdminAttendanceController extends Controller
     {
         $attendance = Attendance::with('restTimes')->findOrFail($id);
         $attendance->update([
-            'clock_in'  => $request->input('clock_in'),
+            'clock_in' => $request->input('clock_in'),
             'clock_out' => $request->input('clock_out'),
-            'remarks'   => $request->input('remarks'),
+            'remarks' => $request->input('remarks'),
         ]);
 
         foreach ($request->input('rest_id', []) as $index => $restId) {
@@ -46,7 +46,7 @@ class AdminAttendanceController extends Controller
                 if ($restTime) {
                     $restTime->update([
                         'rest_start' => $request->input('rest_start')[$index],
-                        'rest_end'   => $request->input('rest_end')[$index],
+                        'rest_end' => $request->input('rest_end')[$index],
                     ]);
                 }
             } else {
@@ -54,7 +54,7 @@ class AdminAttendanceController extends Controller
                 if ($request->input('rest_start')[$index]) {
                     $attendance->restTimes()->create([
                         'rest_start' => $request->input('rest_start')[$index],
-                        'rest_end'   => $request->input('rest_end')[$index],
+                        'rest_end' => $request->input('rest_end')[$index],
                     ]);
                 }
             }
