@@ -39,7 +39,7 @@ Route::middleware(['auth'])->group(function () {
 });
 
 // 一般ユーザー用ルート
-Route::middleware(['auth', 'user'])->group(function () {
+Route::middleware(['auth', 'verified', 'user'])->group(function () {
     Route::get('/attendance', [AttendanceController::class, 'index']);
     Route::post('/attendance', [AttendanceController::class, 'store']);
     Route::get('/attendance/list', [AttendanceController::class, 'list']);
