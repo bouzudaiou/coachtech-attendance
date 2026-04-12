@@ -30,6 +30,7 @@ class AdminTest extends TestCase
             'password' => 'ysnb5884',
             'role' => 'admin',
         ]);
+        $this->admin->markEmailAsVerified();
 
         $this->user = User::create([
             'name' => 'テスト花子',
@@ -37,6 +38,7 @@ class AdminTest extends TestCase
             'password' => 'password1234',
             'role' => 'user',
         ]);
+        $this->user->markEmailAsVerified();
     }
 
     protected function tearDown(): void

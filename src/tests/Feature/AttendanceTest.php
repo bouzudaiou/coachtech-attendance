@@ -29,6 +29,7 @@ class AttendanceTest extends TestCase
             'password' => 'password1234',
             'role' => 'user',
         ]);
+        $this->user->markEmailAsVerified();
     }
 
     protected function tearDown(): void
