@@ -28,8 +28,8 @@ class AttendanceTest extends TestCase
             'email' => 'taro@example.com',
             'password' => 'password1234',
             'role' => 'user',
+            'email_verified_at' => now(),
         ]);
-        $this->user->markEmailAsVerified();
     }
 
     protected function tearDown(): void

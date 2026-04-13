@@ -29,16 +29,16 @@ class AdminTest extends TestCase
             'email' => 'admin@example.com',
             'password' => 'ysnb5884',
             'role' => 'admin',
+            'email_verified_at' => now(),
         ]);
-        $this->admin->markEmailAsVerified();
 
         $this->user = User::create([
             'name' => 'テスト花子',
             'email' => 'hanako@example.com',
             'password' => 'password1234',
             'role' => 'user',
+            'email_verified_at' => now(),
         ]);
-        $this->user->markEmailAsVerified();
     }
 
     protected function tearDown(): void
